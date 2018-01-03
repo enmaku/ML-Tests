@@ -5,6 +5,7 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.callbacks import ModelCheckpoint
+from keras.models import load_model
 
 batch_size = 128
 num_classes = 10
@@ -32,7 +33,7 @@ y_test = keras.utils.to_categorical(y_test, num_classes)
 # noinspection PyBroadException
 try:
     print("Loading existing model...")
-    model = keras.models.load_model(model_file)
+    model = load_model(model_file)
     print("Model loaded.")
 except:
     print("No model found or model could not be loaded. Starting over.")
@@ -54,4 +55,3 @@ model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, val
 score = model.evaluate(x_test, y_test, verbose=0)
 print('Test loss:', score[0])
 print('Test accuracy:', score[1])
-model.save(model_file)
