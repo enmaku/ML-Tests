@@ -7,13 +7,15 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+import pathlib
 
 batch_size = 128
 num_classes = 10
-epochs = 15
+epochs = 100
 img_rows, img_cols = 28, 28
 model_file = 'models/keras_mnist_cnn.h5'
 checkpoint_file = 'models/keras_mnist_cnn - epoch {epoch:02d} - accuracy {val_acc:.4f}.h5'
+pathlib.Path('models').mkdir(parents=True, exist_ok=True)
 
 # Load, format, and normalize MNIST sample data.
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
