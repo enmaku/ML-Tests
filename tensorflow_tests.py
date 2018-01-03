@@ -29,14 +29,14 @@ x_ = tf.placeholder(tf.float32, shape=[None, 784])
 y_ = tf.placeholder(tf.float32, shape=[None, 10])
 x_image = tf.reshape(x_, [-1, 28, 28, 1])
 
-# First ReLU layer
+# First 5x5 Conv ReLU layer
 W_conv1 = weight_variable([5, 5, 1, 32])
 b_conv1 = bias_variable([32])
 h_conv1 = tf.nn.relu(conv2d(x_image, W_conv1) + b_conv1)
 # And a 2x2 max_pool layer reduces the 28x28 image to 14x14
 h_pool1 = max_pool_2x2(h_conv1)
 
-# Second ReLU layer
+# Second 5x5 Conv ReLU layer
 W_conv2 = weight_variable([5, 5, 32, 64])
 b_conv2 = bias_variable([64])
 h_conv2 = tf.nn.relu(conv2d(h_pool1, W_conv2) + b_conv2)
