@@ -1,4 +1,5 @@
 .vscode/*
 MNIST_data/*
 model/*
-
+.idea/*
+*.h5
