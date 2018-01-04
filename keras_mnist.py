@@ -7,15 +7,25 @@ from keras.layers import Dense, Dropout, Flatten
 from keras.layers import Conv2D, MaxPooling2D
 from keras.callbacks import ModelCheckpoint
 from keras.models import load_model
+from fs.osfs import OSFS
 import pathlib
 
 batch_size = 128
 num_classes = 10
-epochs = 10
+epochs = 15
 img_rows, img_cols = 28, 28
-model_file = 'models/keras_mnist_cnn.h5'
-checkpoint_file = 'models/keras_mnist_cnn - epoch {epoch:02d} - accuracy {val_acc:.4f}.hdf5'
-pathlib.Path('models').mkdir(parents=True, exist_ok=True)
+tensorboard_enabled = True
+
+if tensorboard_enabled:
+    pathlib.Path('./logs/keras_mnist').mkdir(parents=True, exist_ok=True)
+    folder = OSFS("./logs/keras_mnist")
+    test_n = len(list(n for n in folder.listdir(".") if n.startswith('run')))
+    this_test = "./logs/keras_mnist/run" + str(test_n+1) + "/"
+    pathlib.Path(this_test).mkdir(parents=True, exist_ok=True)
+
+model_file = './models/keras_mnist_cnn.h5'
+checkpoint_file = './models/keras_mnist_cnn - epoch {epoch:02d} - accuracy {val_acc:.4f}.hdf5'
+pathlib.Path('./models').mkdir(parents=True, exist_ok=True)
 
 # Load, format, and normalize MNIST sample data.
 (x_train, y_train), (x_test, y_test) = mnist.load_data()
@@ -47,21 +57,26 @@ except:
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(5, 5), activation='relu', use_bias=True, input_shape=input_shape))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(64, kernel_size=(5, 5), activation='relu', use_bias=True))
+    model.add(Conv2D(32, kernel_size=(5, 5), activation='relu', use_bias=True))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Flatten())
-    model.add(Dense(64, activation='relu', use_bias=True))
+    model.add(Dense(32, activation='relu', use_bias=True))
     model.add(Dropout(0.5))
     model.add(Dense(num_classes, activation='softmax', use_bias=True))
     model.compile(loss=keras.losses.categorical_crossentropy, optimizer=keras.optimizers.adam(), metrics=['accuracy'])
 
 # Set up our checkpoint saves.
 # We'll save the main model every epoch but save checkpoints only when they beat the accuracy record.
+# We can also enable tensorboard support by including the appropriate callback in our call to model.fit()
 checkpoint = ModelCheckpoint(checkpoint_file, verbose=1, monitor='val_acc', save_best_only=True, mode='auto')
 mainsave = ModelCheckpoint(model_file, verbose=1, save_best_only=False, mode='auto')
+tb = keras.callbacks.TensorBoard(log_dir=this_test, histogram_freq=1, batch_size=batch_size, write_graph=True, write_grads=True, write_images=False)
+callbacks = [checkpoint, mainsave]
+if tensorboard_enabled:
+    callbacks.append(tb)
 
 # Do the training.
-model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test), callbacks=[checkpoint, mainsave])
+model.fit(x_train, y_train, batch_size=batch_size, epochs=epochs, verbose=1, validation_data=(x_test, y_test), callbacks=callbacks)
 
 # See how we did.
 score = model.evaluate(x_test, y_test, verbose=0)

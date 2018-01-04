@@ -1,4 +1,5 @@
 .vscode/*
+.idea/*
 MNIST_data/*
 models/*
-.idea/*
+logs/*
