@@ -96,7 +96,7 @@ with tf.Session() as sess:
             last_checkpoint_accuracy = current_accuracy
             print("Test accuracy delta this checkpoint: %g" % accuracy_delta)
             print("Saving current model...")
-            saver.save(sess, "./models/mnist-model")
+            saver.save(sess, "./models/tf-mnist-model")
             time_elapsed = time.time() - start_time
             start_time = time.time()
             print("Checkpoint time: %d seconds" % time_elapsed)
@@ -104,7 +104,7 @@ with tf.Session() as sess:
         train_step.run(feed_dict={x_: batch[0], y_: batch[1], keep_prob: 0.5})
 
     print("Saving final model/graph...")
-    saver.save(sess, "./models/mnist-model")
+    saver.save(sess, "./models/tf-mnist-model")
     print("Testing ending accuracy...")
     ending_accuracy = float(accuracy.eval(feed_dict={x_: mnist.test.images, y_: mnist.test.labels, keep_prob: 1.0}))
     print("Ending test accuracy: %g\n" % ending_accuracy)

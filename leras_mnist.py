@@ -11,10 +11,10 @@ import pathlib
 
 batch_size = 128
 num_classes = 10
-epochs = 100
+epochs = 10
 img_rows, img_cols = 28, 28
 model_file = 'models/keras_mnist_cnn.h5'
-checkpoint_file = 'models/keras_mnist_cnn - epoch {epoch:02d} - accuracy {val_acc:.4f}.h5'
+checkpoint_file = 'models/keras_mnist_cnn - epoch {epoch:02d} - accuracy {val_acc:.4f}.hdf5'
 pathlib.Path('models').mkdir(parents=True, exist_ok=True)
 
 # Load, format, and normalize MNIST sample data.
@@ -47,7 +47,7 @@ except:
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(5, 5), activation='relu', input_shape=input_shape))
     model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Conv2D(32, kernel_size=(5, 5), activation='relu'))
+    model.add(Conv2D(64, kernel_size=(5, 5), activation='relu'))
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Flatten())
     model.add(Dense(64, activation='relu'))
