@@ -3,6 +3,7 @@ from __future__ import print_function
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
 from keras.layers.recurrent import LSTM
+from numpy import float64
 
 import numpy as np
 import random
@@ -28,7 +29,7 @@ print("total number of unique chars", len(chars))
 word_indices = dict((c, i) for i, c in enumerate(words))
 indices_word = dict((i, c) for i, c in enumerate(words))
 
-print("word_indices", type(word_indices), "length:", len(word_indices) )
+print("word_indices", type(word_indices), "length:", len(word_indices))
 print("indices_words", type(indices_word), "length", len(indices_word))
 
 maxlen = 30
@@ -36,10 +37,7 @@ step = 3
 print("maxlen:", maxlen, "step:", step)
 sentences = []
 next_words = []
-next_words = []
 sentences1 = []
-list_words = []
-
 sentences2 = []
 list_words = text.lower().split()
 
@@ -82,6 +80,8 @@ def sample(a, temperature=1.0):
     # helper function to sample an index from a probability array
     a = np.log(a) / temperature
     a = np.exp(a) / np.sum(np.exp(a))
+    a = a.astype(float64)
+    a = a / a.sum(0)
     return np.argmax(np.random.multinomial(1, a, 1))
 
 
