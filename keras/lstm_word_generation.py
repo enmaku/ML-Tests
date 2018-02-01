@@ -8,10 +8,11 @@ import numpy as np
 import random
 import sys
 import os
+from unidecode import unidecode
 
 path = "datasets/pride_prejudice.txt"
 
-text = open(path).read().lower()
+text = unidecode(open(path, 'r', encoding='utf-8').read().lower())
 
 print('corpus length:', len(text))
 
@@ -73,8 +74,8 @@ model.add(Activation('softmax'))
 
 model.compile(loss='categorical_crossentropy', optimizer='rmsprop')
 
-if os.path.isfile('GoTweights'):
-    model.load_weights('GoTweights')
+if os.path.isfile('lstm_character_gernation_weights.h5'):
+    model.load_weights('lstm_character_gernation_weights.h5')
 
 
 def sample(a, temperature=1.0):
@@ -90,7 +91,7 @@ for iteration in range(1, 300):
     print('-' * 50)
     print('Iteration', iteration)
     model.fit(X, y, batch_size=128, epochs=2)
-    model.save_weights('GoTweights', overwrite=True)
+    model.save_weights('lstm_character_gernation_weights.h5', overwrite=True)
 
     start_index = random.randint(0, len(list_words) - maxlen - 1)
 
@@ -120,4 +121,5 @@ for iteration in range(1, 300):
             sys.stdout.write(next_word)
             sys.stdout.flush()
         print()
-# model.save_weights('weights')
+
+model.save_weights('lstm_character_gernation_weights.h5')
