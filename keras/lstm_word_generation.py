@@ -110,7 +110,7 @@ for iteration in range(1, 300):
         # increment batchCursor by step, wrapping around from
         # end-to-beginning, but respecting that there should be seqlen+1
         # additional tokens following the cursor
-        batchCursor = (batchCursor + step + seqlen + 1) % len(corpus_tokens)
+        batchCursor = (batchCursor + step) % (len(corpus_tokens) - seqlen - 1)
 
     model.fit(X, y, epochs=2)
     model.save_weights('lstm_character_gernation_weights.h5', overwrite=True)
