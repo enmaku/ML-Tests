@@ -18,13 +18,11 @@ text = unidecode(open(path, 'r', encoding='utf-8').read().lower())
 
 print('corpus length:', len(text))
 
-token_re = re.compile(r'(\w+|[\'])+|[.,!"]')# TODO more punctuation and more exotic chars
+token_re = re.compile(r'(\w+|[\'])+|[.,!"]')  # TODO more punctuation and more exotic chars
 # corpus_tokens should contain a list of tokens, which for the above regexp
 # should be words and some punctuation marks
-corpus_tokens = list(map(
-  lambda match: match.string[match.start():match.end()]
-, token_re.finditer(open(path).read().lower())
-))
+corpus_tokens = list(map(lambda match: match.string[match.start():match.end()],
+                         token_re.finditer(open(path).read().lower())))
 # Obtain a set of all unique tokens in the corpus
 token_set = set(corpus_tokens)
 
@@ -49,7 +47,7 @@ batches_per_demo = 8
 print("seqlen:", seqlen, "step:", step)
 # check that we'll get a healthy mix of sequences
 if len(corpus_ordinals) % step == 0:
-  print('WARNING: your corpus is a multiple of your step size')
+    print('WARNING: your corpus is a multiple of your step size')
 
 # we'll use one-hot encoding representation of tokens. this means a huge
 # bool vector for each token representation of length len(token_set)
@@ -103,16 +101,16 @@ for iteration in range(1, 300):
     y.fill(0)
     # TODO can this be optimized further?
     for iSample in range(batch_size):
-      # one-hot for features
-      for iSeq, ordinal in enumerate(corpus_ordinals[batchCursor : batchCursor + seqlen]):
-        X[iSample, iSeq, ordinal] = 1
-      # one-hot for labels
-      ordinal = corpus_ordinals[batchCursor + seqlen]
-      y[iSample, ordinal] = 1
-      # increment batchCursor by step, wrapping around from
-      # end-to-beginning, but respecting that there should be seqlen+1
-      # additional tokens following the cursor
-      batchCursor = (batchCursor + step + seqlen + 1) % len(corpus_tokens)
+        # one-hot for features
+        for iSeq, ordinal in enumerate(corpus_ordinals[batchCursor : batchCursor + seqlen]):
+            X[iSample, iSeq, ordinal] = 1
+        # one-hot for labels
+        ordinal = corpus_ordinals[batchCursor + seqlen]
+        y[iSample, ordinal] = 1
+        # increment batchCursor by step, wrapping around from
+        # end-to-beginning, but respecting that there should be seqlen+1
+        # additional tokens following the cursor
+        batchCursor = (batchCursor + step + seqlen + 1) % len(corpus_tokens)
 
     model.fit(X, y, epochs=2)
     model.save_weights('lstm_character_gernation_weights.h5', overwrite=True)
@@ -120,32 +118,32 @@ for iteration in range(1, 300):
     start_index = random.randint(0, len(corpus_tokens) - seqlen - 1)
 
     if iteration % batches_per_demo == 0:
-      for diversity in [0.2, 0.5, 1.0, 1.2]:
-          print()
-          print('----- diversity:', diversity)
-          generated = ''
-          sentence = corpus_tokens[start_index: start_index + seqlen]
-          generated += ' '.join(sentence)
-          print('----- Generating with seed: "', sentence, '"')
-          print()
-          sys.stdout.write(generated)
-          print()
+        for diversity in [0.2, 0.5, 1.0, 1.2]:
+            print()
+            print('----- diversity:', diversity)
+            generated = ''
+            sentence = corpus_tokens[start_index: start_index + seqlen]
+            generated += ' '.join(sentence)
+            print('----- Generating with seed: "', sentence, '"')
+            print()
+            sys.stdout.write(generated)
+            print()
 
-          for i in range(1024):
-              x = np.zeros((1, seqlen, len(token_set)))
-              for t, word in enumerate(sentence):
-                  x[0, t, ordinals_by_token[word]] = 1.
+            for i in range(1024):
+                x = np.zeros((1, seqlen, len(token_set)))
+                for t, word in enumerate(sentence):
+                    x[0, t, ordinals_by_token[word]] = 1.
 
-              preds = model.predict(x, verbose=0)[0]
-              next_index = sample(preds, diversity)
-              next_word = tokens_by_ordinal[next_index]
-              generated += next_word
-              del sentence[0]
-              sentence.append(next_word)
-              sys.stdout.write(' ')
-              sys.stdout.write(next_word)
-              sys.stdout.flush()
-          print()
+                preds = model.predict(x, verbose=0)[0]
+                next_index = sample(preds, diversity)
+                next_word = tokens_by_ordinal[next_index]
+                generated += next_word
+                del sentence[0]
+                sentence.append(next_word)
+                sys.stdout.write(' ')
+                sys.stdout.write(next_word)
+                sys.stdout.flush()
+            print()
 
     print('batchCursor = %s' % batchCursor)
 
