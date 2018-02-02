@@ -148,3 +148,5 @@ for iteration in range(1, 300):
     print('batchCursor = %s' % batchCursor)
 
 model.save_weights('lstm_character_gernation_weights.h5')
+
+# vim: set ts=4 sts=4 sw=4 :
