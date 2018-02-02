@@ -38,7 +38,6 @@ print("maxlen:", maxlen, "step:", step)
 sentences = []
 next_words = []
 sentences1 = []
-sentences2 = []
 list_words = text.lower().split()
 
 
