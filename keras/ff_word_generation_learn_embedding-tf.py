@@ -116,7 +116,6 @@ with tf.Session() as sess:
       print('seed:', ' '.join(seed_tokens))
       print('sentence:')
       for i in range(50):
-        print('seed_tokens=', seed_tokens)
         features_data[0] = list(token_to_ordinal[token] for token in seed_tokens)
         (decoded_y_run,) = sess.run(
           [decoded_y], feed_dict={
